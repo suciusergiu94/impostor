@@ -7,7 +7,7 @@ export default function Lobby({ players, onJoin, onStart, playerName }) {
   const [nameInput, setNameInput] = useState("");
 
   const isJoined = !!playerName;
-  const isMaster = playerName === "lisupisu";
+  const isMaster = playerName === "Sergiu";
 
   return (
     <div className="space-y-8 bg-zinc-900/50 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl">
@@ -68,7 +68,7 @@ export default function Lobby({ players, onJoin, onStart, playerName }) {
           )}
           {!isMaster && (
             <div className="text-center text-zinc-500 text-sm animate-pulse">
-              Waiting for lisupisu to start...
+              Waiting for Sergiu to start...
             </div>
           )}
         </div>

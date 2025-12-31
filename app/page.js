@@ -12,6 +12,19 @@ export default function Home() {
   const [players, setPlayers] = useState([]);
   const [data, setData] = useState({});
 
+  // Restore session
+  useEffect(() => {
+    const savedName = localStorage.getItem('impostor_playerName');
+    if (savedName) setPlayerName(savedName);
+  }, []);
+
+  // Save session
+  const savePlayerName = (name) => {
+    setPlayerName(name);
+    if (name) localStorage.setItem('impostor_playerName', name);
+    else localStorage.removeItem('impostor_playerName');
+  };
+
   // Polling
   const poll = useCallback(async () => {
     // Poll even if no player name to see lobby updates
@@ -52,7 +65,7 @@ export default function Home() {
       body: JSON.stringify({ action: "join", player: name }),
       headers: { "Content-Type": "application/json" },
     });
-    setPlayerName(name);
+    savePlayerName(name);
   };
 
   const startGame = async () => {
@@ -93,7 +106,7 @@ export default function Home() {
       headers: { "Content-Type": "application/json" },
     });
     // Reset local state
-    setPlayerName(null);
+    savePlayerName(null);
     setGameState("LOBBY");
   };
 
@@ -110,7 +123,7 @@ export default function Home() {
             setPlayers(d.players);
             setGameState(d.gameState);
           })
-          .catch((e) => {});
+          .catch((e) => { });
       }, 2000);
       return () => clearInterval(timer);
     }
@@ -126,13 +139,20 @@ export default function Home() {
     if (playerName && players.length > 0) {
       const stillIn = players.find((p) => p.name === playerName);
       if (!stillIn) {
-        setPlayerName(null); // Kicked or reset
+        savePlayerName(null); // Kicked or reset
       }
     }
   }, [players, playerName]);
 
+  // Force Lobby if no player name, even if game is in progress
+  // This handles the case where a user refreshes and might momentarily have no name, 
+  // or if they are a new observer.
+  // Actually, if we restore from localStorage, `playerName` might be set quickly.
+  // But if it remains null, we must show Lobby.
+  const showLobby = gameState === 'LOBBY' || !playerName;
+
   // View Routing
-  if (gameState === "LOBBY") {
+  if (showLobby) {
     return (
       <Lobby
         players={players}
@@ -172,7 +192,7 @@ export default function Home() {
         impostorIdentity={data.impostorIdentity}
         word={data.secret}
         votes={data.votes}
-        isMaster={playerName === "lisupisu"}
+        isMaster={playerName === "Sergiu"}
         onNextRound={nextRound}
         onReset={resetGame}
         lastRoundResults={data.lastRoundResults}

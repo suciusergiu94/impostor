@@ -57,7 +57,7 @@ export async function POST(request) {
     case "start":
       // Basic auth: Anyone named "Sergiu" or just allow any valid player if we want flexibility?
       // Requirement: "button, on the screen for the name "Sergiu" to start"
-      if (player === "lisupisu") {
+      if (player === "Sergiu") {
         gameManager.startGame();
       }
       break;
@@ -65,12 +65,12 @@ export async function POST(request) {
       gameManager.submitVote(player, target);
       break;
     case "reset":
-      if (player === "lisupisu") {
+      if (player === "Sergiu") {
         gameManager.resetGame();
       }
       break;
     case "next_round":
-      if (player === "lisupisu") {
+      if (player === "Sergiu") {
         gameManager.startNextRound();
       }
       break;
